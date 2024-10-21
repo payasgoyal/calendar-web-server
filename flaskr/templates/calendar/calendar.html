@@ -1,0 +1,284 @@
+{% extends 'base.html' %}
+
+{% block head %}
+
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
+
+<script>
+    let events_stored = {{ events | tojson }};
+
+    document.addEventListener('DOMContentLoaded', function () {
+
+        var calendarEl = document.getElementById('calendar');
+
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            timeZone: 'local',
+            initialView: 'dayGridMonth',
+            headerToolbar: {
+                left: 'prevYear,prev,next,nextYear today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth,multiMonthYear'
+            },
+            footerToolbar: {
+                start: 'addEventButton',
+                center: '',
+                end: 'prev,next'
+            },
+            customButtons: {
+                addEventButton: {
+                    text: 'Add Event...',
+                    click: function () {
+                        var startDateStr = prompt('Enter a start date in YYYY-MM-DD format');
+                        if (startDateStr === null) {
+                            return;
+                        }
+                        var endDateStr = prompt('Enter a end date in YYYY-MM-DD format');
+                        if (endDateStr === null) {
+                            return;
+                        }
+                        var eventTitle = prompt('Enter a title');
+                        if (eventTitle === null) {
+                            return;
+                        }
+                        var startDate = new Date(startDateStr);
+                        var endDate = new Date(endDateStr);
+                        if (!isNaN(startDate.valueOf()) && !isNaN(endDate.valueOf())) {
+                            calendar.addEvent({
+                                title: eventTitle,
+                                start: startDate.toISOString().split('T')[0],
+                                end: endDate.toISOString().split('T')[0],
+                                allDay: true
+                            });
+                            createEventInDb({
+                                date_start: startDate.toISOString().split('T')[0],
+                                date_end: endDate.toISOString().split('T')[0],
+                                event_title: eventTitle,
+                                display: 'block'
+                            })
+                        } else {
+                            alert('Invalid date.');
+                        }
+                    }
+                }
+            },
+            events: events_stored,
+            dateClick: function (info) {
+                //var dateStr = prompt('Enter a date in YYYY-MM-DD format');
+                var eventTitle = prompt('Enter a title');
+                if (eventTitle == null || eventTitle == '') {
+                    return;
+                }
+                var date = new Date(info.dateStr);
+                if (!isNaN(date.valueOf())) {
+                    calendar.addEvent({
+                        title: eventTitle,
+                        start: date.toISOString().split('T')[0],
+                        allDay: true
+                    });
+                    createEventInDb({
+                        date_start: date.toISOString().split('T')[0],
+                        date_end: date.toISOString().split('T')[0],
+                        event_title: eventTitle,
+                        display: 'block'
+                    })
+                } else {
+                    alert('Invalid date.');
+                }
+            },
+            eventClick: function (info) {
+                console.log('event to be deleted', info.event)
+                var modalHtml = `
+                    <div id="eventModal" class="modal" style="display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; overflow:auto; background-color:rgba(0,0,0,0.4);">
+                        <div class="modal-content" style="background-color:#fefefe; margin:15% auto; padding:20px; border:1px solid #888; width:80%; max-width:500px;">
+                            <h2>Event Details</h2>
+                            <p>Event: ${info.event.title}</p>
+                            <p>Event Start Date: ${info.event.start}</p>
+                            <p>Event End Date: ${info.event.end}</p>
+                            <button id="deleteEventBtn" style="background-color:#f44336; color:white; padding:10px 15px; border:none; cursor:pointer; margin-left:10px; margin-right:10px">Delete Event</button>
+                            <button id="closeModalBtn" style="background-color:#ccc; color:black; padding:10px 15px; border:none; cursor:pointer; margin-top:10px;margin-left:10px; margin-right:10px">Close</button>
+                        </div>
+                    </div>
+                    `;
+
+                document.body.insertAdjacentHTML('beforeend', modalHtml);
+                document.getElementById('eventModal').style.display = 'block'
+
+                function deleteEvent() {
+                    if (confirm('Are you sure you want to delete this event?')) {
+                        info.event.remove();
+                        deleteEventInDb({ id: info.event.id })
+                        closeModal();
+                    }
+                }
+
+                // Close modal function
+                function closeModal() {
+                    document.getElementById('eventModal').remove();
+                }
+
+                // Event listeners
+                document.getElementById('deleteEventBtn').addEventListener('click', deleteEvent);
+                document.getElementById('closeModalBtn').addEventListener('click', closeModal);
+
+                window.onclick = function (event) {
+                    var modal = document.getElementById('eventModal');
+                    if (event.target == modal) {
+                        closeModal();
+                    }
+                }
+            },
+            editable: false,
+            weekNumbers: true,
+            selectable: false,
+        });
+
+        // render calendar 
+        calendar.render();
+
+        function createEventInDb(eventData) {
+            console.log('entering updarte...')
+            fetch('/cal/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(eventData)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Event added to database:', data);
+                    // You can update the UI here if needed
+                })
+                .catch(error => {
+                    console.error('Error adding event to database:', error);
+                    alert('Failed to add event to database. Please try again.');
+                });
+        }
+
+        function deleteEventInDb(eventData) {
+            console.log('eventData in deelet...', eventData)
+            fetch('/cal/delete', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(eventData)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Event deleted from database:', data);
+                    window.location.reload();
+                })
+                .catch(error => {
+                    console.error('Error deleting event from database:', error);
+                    alert('Failed to delete event to database. Please try again.');
+                });
+        }
+
+    });
+
+
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const fileInput = document.getElementById('file-input');
+        const fileNameDisplay = document.getElementById('file-name');
+        const uploadStatus = document.getElementById('upload-status');
+
+        fileInput.addEventListener('change', function (e) {
+            const fileName = e.target.files[0].name;
+            fileNameDisplay.textContent = `Selected file: ${fileName}`;
+        });
+
+        function uploadFile() {
+            const file = fileInput.files[0];
+            if (!file) {
+                uploadStatus.textContent = 'Please select a file first.';
+                return;
+            }
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            uploadStatus.textContent = 'Uploading...';
+            setTimeout(() => {
+                fetch('/cal/upload', {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        uploadStatus.textContent = `Successfully added events!`;
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        uploadStatus.textContent = 'Upload failed. Please try again.';
+                    });
+            }, 2000);
+        }
+        window.uploadFile = uploadFile;
+    });
+</script>
+
+{% endblock %}
+
+
+{% block content %}
+<style>
+    .upload-container {
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        border: solid red 2px;
+        width: 500px
+    }
+
+    #file-name {
+        margin-top: 10px;
+        font-style: italic;
+    }
+</style>
+<div class="row">
+    <div class="col-md-2 order-md-2 mb-4" style="margin-left: 50px; margin-top: 20px;">
+        <p>
+            <strong>Upload Events File</strong>
+        </p>
+        <div class="upload-container">
+            <input type="file" id="file-input" accept=".csv">
+            <button onclick="uploadFile()">Upload</button>
+            <div id="file-name"></div>
+            <div id="upload-status"></div>
+        </div>
+        <div style="padding: 50px 50px; width:500px;">
+            <p>Instructions:</p>
+            <ul>
+                <li>Click on any date to add an event
+                <li>Click 'Add Event...' button to add multi-day event
+                <li>Click on the event to view and delete the event
+              </ul>
+        </div>
+    </div>
+
+    <div id="calendar-container" class="col-md-8 order-md-1">
+        <div id="calendar" class=""></div>
+    </div>
+
+</div>
+
+{% endblock %}

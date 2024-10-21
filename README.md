@@ -14,7 +14,7 @@ Calendar Web App to add events either by manual entry or by importing data from 
 ## Features
 
 - Login/Register using Email or Google OAuth
-- Email Reminders to notify about any upcoming event
+- Email Reminders to notify users about any upcoming event
 - Manual Entry for multi-day event or single day event
 - Bulk upload of events using CSV file
 
@@ -30,6 +30,8 @@ The project has been developed on MacOS with Apple Silicon(M1), but should work 
 5. In terminal, run command "flask --app flaskr init-db" to Initialize the database file in instance folder
 6. Run "flask --app flaskr run" to launch the application
 7. Launch your browser and enter 'http://127.0.0.1:5000/' in url
+8. Upload sample csv files present in dummy_events folder for testing bulk upload functionality
+9. Keep the app running in order for the email service to work, which will remind users of any upcoming events
 
 ## Virtualenv Environment
 
@@ -96,4 +98,6 @@ B. Google OAuth
 
 I have used Flask as my choice of backend for this application because of its vast community and easy setup. I have thoroughly followed the official documentation of Flask to setup a basic flask application and work on top of it to create CRUD operations for calendar events and integrating google Oauth . Initially, I was thinking to integrate a separate front-end project but due to lack of time, I decided to serve templates from Flask application  itself. Thats when FullCalendar.io came to rescue. Its a clean, simple Calendar UI library which allows a lot of customization. Integrating Google Oauth was quite a challenge specially because I had never integrated any authentication service before but overall, it was  a great learning experience. 
 
-In the end, I tried deploying the app to Heroku but after many retries, I was not able to make it run and therefore decided to pass the files but meanwhile, I will keep trying to make Heroku work. Overall, this project was a great learning experience for me irrespective of the outcomes from this assessment. I would like to thank Animoca Brands to give me a chance.
+I have used SendGrid for the setting up the email service to notify users about the upcoming events, as of now the events which are upcoming in next 2 days, users will be notified about them via email with the help of SendGrid client
+
+In the end, I tried deploying the app to Herokus but after many retries, I was not able to make it run and therefore decided to pass the files but meanwhile, I will keep trying to make Heroku work. Overall, this project was a great learning experience for me irrespective of the outcomes from this assessment.

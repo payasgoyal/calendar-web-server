@@ -81,16 +81,16 @@ $ deactivate
 
 ## Details
 
-1. Normal Registration
-a. Enter Name, Email, Password and register your details
-b. Go to Log In page, and enter Email and Password to Log In
-c. Play around with the Calendar by adding events or uploading CSV files
-d. Log out to sign out of the app
+A. Normal Registration
+1. Enter Name, Email, Password and register your details
+2. Go to Log In page, and enter Email and Password to Log In
+3. Play around with the Calendar by adding events or uploading CSV files
+4. Log out to sign out of the app
 
 
-2. Google OAuth
-a. Go to Log In page, click on Login with Google to select google account to log in with
-b. Same as normal registration
+B. Google OAuth
+1. Go to Log In page, click on Login with Google to select google account to log in with
+2. Same as normal registration
 
 ## Discussion
 

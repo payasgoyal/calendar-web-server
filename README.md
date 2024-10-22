@@ -62,7 +62,7 @@ $ deactivate
 │   ├── db.py # database related configuration
 │   ├── schema.sql # database schematics 
 │   ├── auth.py # registration and login related 
-│   ├── calendar.py # CRUD for calendar resources
+│   ├── calendar_helper.py # CRUD for calendar resources
 │   ├── templates/
 │   │   ├── base.html
 │   │   ├── auth/

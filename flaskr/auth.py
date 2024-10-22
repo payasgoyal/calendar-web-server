@@ -54,7 +54,6 @@ def googleLogin():
 @bp.before_app_request
 def load_logged_in_user():
     user_id = session.get('user_id')
-    print("user_id...", user_id)
 
     if user_id is None:
         g.user = None
@@ -123,15 +122,13 @@ def login():
 
         if user is None:
             error = 'Incorrect email/password'
-            error = 'Incorrect email/password'
         elif not check_password_hash(user['password'], password):
-            error = 'Incorrect email/password.'
             error = 'Incorrect email/password.'
 
         if error is None:
             session.clear()
             session['user_id'] = user['id']
-            return redirect(url_for('calendar.show_cal'))
+            return redirect(url_for('calendar_helper.show_cal'))
 
         flash(error)
 
@@ -155,7 +152,6 @@ def callback():
         audience=GOOGLE_CLIENT_ID
     )
 
-    print("ID Info: ", id_info)
     email = id_info.get("email")
     name = id_info.get("name")
     google_id = id_info.get('sub')
@@ -171,7 +167,7 @@ def callback():
         cursor.execute("INSERT INTO user (name, email, google_id, provider) VALUES (?,?,?,?)", (name, email, google_id, 'google' ))
         db.commit()
         user_id = cursor.lastrowid
-        print("ID: ", user_id)
+
     else:
         user_id = user[0]
 
@@ -180,12 +176,9 @@ def callback():
     session["name"] = id_info.get("name")
     session['email'] = id_info.get("email")
     session['user_id'] = user_id
-    print("session name", session["name"])
-    print("session googleid", session["google_id"])
     return redirect("/cal")
 
 @bp.route("/logout")
 def logout():
-    print("session at logout..", logout)
     session.clear()
     return redirect(url_for('auth.login'))

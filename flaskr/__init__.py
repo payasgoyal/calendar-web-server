@@ -9,7 +9,7 @@ from datetime import datetime
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from flaskr.calendar import *
+from flaskr.calendar_helper import *
 from flaskr.auth import *
 from dotenv.main import load_dotenv
 
@@ -50,9 +50,9 @@ def create_app(test_config=None):
     from . import auth
     app.register_blueprint(auth.bp)
 
-    #register blueprint "calendar"
-    from . import calendar
-    app.register_blueprint(calendar.bp)
+    #register blueprint "calendar_helper"
+    from . import calendar_helper
+    app.register_blueprint(calendar_helper.bp)
 
     with app.app_context():
 

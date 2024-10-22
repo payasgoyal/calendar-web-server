@@ -14,7 +14,7 @@ from flaskr.auth import login_required
 
 from datetime import datetime, timedelta
 
-bp = Blueprint('calendar', __name__, url_prefix='/cal')
+bp = Blueprint('calendar_helper', __name__, url_prefix='/cal')
 
 @bp.route("/", methods=("GET", "POST"))
 @login_required

@@ -9,6 +9,7 @@ Calendar Web App to add events either by manual entry or by importing data from 
 - [Project Layout](#project-layout)
 - [Details](#details)
 - [Discussion](#discussion)
+- [Screenshots](#screenshots)
 
 
 ## Features
@@ -101,3 +102,9 @@ I have used Flask as my choice of backend for this application because of its va
 I have used SendGrid for the setting up the email service to notify users about the upcoming events, as of now the events which are upcoming in next 2 days, users will be notified about them via email with the help of SendGrid client
 
 In the end, I tried deploying the app to Herokus but after many retries, I was not able to make it run and therefore decided to pass the files but meanwhile, I will keep trying to make Heroku work. Overall, this project was a great learning experience for me irrespective of the outcomes from this assessment.
+
+
+
+## Screenshots
+
+Screenshots of different views of the application can be found in folder screenshots

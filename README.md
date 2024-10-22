@@ -1,6 +1,9 @@
 # Calendar Web App
 Calendar Web App to add events either by manual entry or by importing data from CSV file
 
+![Screenshot 2024-10-22 at 10 05 43 PM](https://github.com/user-attachments/assets/0910076b-c721-4341-abdb-777fa5724585)
+
+
 ## Table of Contents
 
 - [Features](#features)

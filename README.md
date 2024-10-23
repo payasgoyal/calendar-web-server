@@ -1,6 +1,8 @@
 # Calendar Web App
 Calendar Web App to add events either by manual entry or by importing data from CSV file
 
+App Link: https://calendar-web-app-8f07bae2734c.herokuapp.com/
+
 ![Screenshot 2024-10-22 at 10 05 43 PM](https://github.com/user-attachments/assets/0910076b-c721-4341-abdb-777fa5724585)
 
 
@@ -11,6 +13,7 @@ Calendar Web App to add events either by manual entry or by importing data from 
 - [Virtualenv Environment](#virtualenv-environment)
 - [Project Layout](#project-layout)
 - [Details](#details)
+- [Deployment](#deployment)
 - [Discussion](#discussion)
 - [Screenshots](#screenshots)
 
@@ -97,6 +100,11 @@ A. Normal Registration
 B. Google OAuth
 1. Go to Log In page, click on Login with Google to select google account to log in with
 2. Same as normal registration
+
+## Deployment
+
+Successfully deployed on Heroku
+App Link: https://calendar-web-app-8f07bae2734c.herokuapp.com/
 
 ## Discussion
 

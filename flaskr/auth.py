@@ -41,7 +41,7 @@ flow = Flow.from_client_config(
         }
     },
     scopes=["https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email", "openid"],
-    redirect_uri="https://calendar-web-app-8f07bae2734c.herokuapp.com/auth/callback"
+    redirect_uri="http:127.0.0.1:5000/auth/callback"
 )
 
 @bp.route('/google', methods=('GET', 'POST'))
